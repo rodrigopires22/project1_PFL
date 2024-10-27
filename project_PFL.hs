@@ -13,18 +13,41 @@ type Distance = Int
 type RoadMap = [(City,City,Distance)]
 
 cities :: RoadMap -> [City]
-{-Para esta função nós usamos uma Comprension List para percorrer todas as cidades do road map, concatenado-as numa lisat com a função concat. 
+
+{-Para esta função nós usamos uma Comprension List para percorrer todas as cidades do road map, concatenado-as numa lista com a função concat. 
 Para retirar os duplicados usamos a função nub do Data.List-}
 
 cities r = Data.List.nub (concat [[c1,c2] | (c1,c2,d) <- r])  
 
 areAdjacent :: RoadMap -> City -> City -> Bool
 
+{-Para o areAdjacent usamos condições para returnar True se as 2 cidades fossem adjacentes e False se não fossem -}
+
 areAdjacent [] _ _ = False
 
 areAdjacent ((c1, c2, _):rs) city1 city2 
     |(c1 == city1 && c2 == city2) || (c1 == city2 && c2 == city1)  = True
     |otherwise = areAdjacent rs city1 city2
+
+
+
+
+distance :: RoadMap -> City -> City -> Maybe Distance
+
+{- Para a distance utilizamos a mesma formula da areAdjacent só que para retornar a distancia em vez de um bool -}
+
+distance [] _ _ = Nothing
+distance ((c1, c2, d):rs) city1 city2
+    | (c1 == city1 && c2 == city2) || (c1 == city2 && c2 == city1) = Just d
+    | otherwise = distance rs city1 city2
+
+
+
+adjacent :: RoadMap -> City -> [(City, Distance)]
+
+{-Para esta função utilizamos compreensive lists para percorrer todo o roadmap e retirar as cidades adjacentes à cidade dada-}
+
+adjacent r city = ([ (c1, d) | (c1, c2, d) <- r, c2 == city] ++ [(c2, d) | (c1, c2, d) <- r, c1 == city])
 
 
 pathDistance :: RoadMap -> Path -> Maybe Distance
@@ -36,29 +59,62 @@ pathDistance roadmap (c1:c2:cs) = case distance roadmap c1 c2 of
         Nothing -> Nothing
         Just ds -> Just (d + ds)
 
-distance :: RoadMap -> City -> City -> Maybe Distance
-distance roadmap city1 city2 = 
-    case [(d) | (c1, c2, d) <- roadmap, (c1 == city1 && c2 == city2) || (c1 == city2 && c2 == city1)] of
-        [d] -> Just d
-        _   -> Nothing
-
-
-
-adjacent :: RoadMap -> City -> [(City, Distance)]
-adjacent roadmap city = [(c2, d) | (c1, c2, d) <- roadmap, c1 == city] ++ [(c1, d) | (c1, c2, d) <- roadmap, c2 == city]
-
 
 rome :: RoadMap -> [City]
-rome roadmap = [city | (city, deg) <- cityDegrees, deg == maxDegree]
+rome r = [city | (city, deg) <- cityDegree, deg == maxDegree]
   where
-    cityDegrees = [(city, length (adjacent roadmap city)) | city <- cities roadmap]
-    maxDegree = maximum (map snd cityDegrees)
+    cityDegree = [(city, length (adjacent r city)) | city <- cities r]
+    maxDegree = maximum (map snd cityDegree)
 
-isStronglyConnected :: RoadMap -> Bool
-isStronglyConnected = undefined
 
+adjacentCity :: RoadMap -> City -> [City] -- Função para saber as cidades adjacentes a outra cidade (é igual à função adjacent só que sem a distância)
+adjacentCity r city = ([ c1 | (c1, c2, d) <- r, c2 == city] ++ [c2 | (c1, c2, d) <- r, c1 == city])
+
+dfsHelper :: RoadMap -> City -> [City] -> [City]
+ {-Função para ajudar a fazer o dfs
+ Verificamos se a cidade já está presente na lista dos visitados, 
+ se estiver retornamos a lista, se não  acrescentmos a a cidade à 
+ lista e utilizamos a recursão para repetir a função com a cidades adjacentes ate verificarmos todas-}
+dfsHelper r city visited
+      | city `elem` visited = visited 
+      | otherwise = foldr (dfsHelper r) (city : visited) (adjacentCity r city)
+
+dfs:: RoadMap -> City -> [City] -- Função para fazer uma dfs
+dfs r startCity = dfsHelper r startCity []
+
+    
+isStronglyConnected :: RoadMap -> Bool --isStronglyConnected (com ajuda das funções auxiliares em cima) calcula se um roadmap é strongly connected
+isStronglyConnected r = all canReach allCities -- Usamos a função all que verifica se todos os elemtos da lista satisfazem a condição (visited) e retorna True se forem todas verdadeiras e False se não forem
+  where
+    allCities = cities r
+    canReach city = length (dfs r city) == length allCities --Verifica se o tamnho da lista visited é igual ao tamanho da lisa do numero total de cidades
+
+
+
+-- Encontra todos os caminhos mais curtos entre duas cidades
 shortestPath :: RoadMap -> City -> City -> [Path]
-shortestPath = undefined
+shortestPath r start end
+    | start == end = [[start]]  -- Caso base: o caminho mais curto de uma cidade para ela mesma é a própria cidade
+    | otherwise = bfs [[start]] [] maxDistance
+  where
+    maxDistance = 10^6  -- Define uma distância "máxima" alta para representar infinitos
+    -- BFS para encontrar todos os caminhos mais curtos
+    bfs :: [Path] -> [Path] -> Distance -> [Path]
+    bfs [] shortestPaths _ = shortestPaths  -- Sem mais caminhos para explorar
+    bfs (p:ps) shortestPaths minDist
+        | last path == end =
+            case pathDistance r p of
+                Nothing -> bfs ps shortestPaths minDist  -- Ignora caminhos inválidos
+                Just d  ->
+                    if d < minDist
+                    then bfs ps [p] d  -- Novo caminho mais curto encontrado
+                    else if d == minDist
+                         then bfs ps (p : shortestPaths) minDist  -- Outro caminho com a mesma distância mínima
+                         else bfs ps shortestPaths minDist
+        | otherwise =
+            let nextCities = [city | (city, _) <- adjacent r (last path), city `notElem` path]
+                newPaths = [path ++ [next] | next <- nextCities]
+            in bfs (paths ++ newPaths) shortestPaths minDist
 
 travelSales :: RoadMap -> Path
 travelSales = undefined
