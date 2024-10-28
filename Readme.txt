@@ -1,11 +1,16 @@
+<<<<<<< HEAD:Readme.pdf
 Afonso Mansilha  up202206002  50%  - Desenvolveu as features Cities, areAdjacent, isStronglyConnected e shortesPath.
 
 Rodrigo Pires up202207292 50% - Desenvolveu as features pathDistance, rome, adjacentCity, travelSales e isValidPath
+=======
+Afonso Mansilha  up202206002  50%  - Desenvolveu as features Cities, areAdjacent, isStronglyConnected e shortesPath e as funções auxiliares adjacentCity, bfs, dfs e dfsHelper
+-- escreve aqui o teu nome e up e mete as funções que fizeste
+>>>>>>> origin/main:Readme.txt
 
 
 **shortestPath**
 
-  Para a função shortestPath começamos por definir o caso em que é pedido o camino mais curto ente uma cidade e ela mesma, se este não fosse o caso utilizamos as funções bfs( recebe uma cidade como ponto de partida e faz uma Breadh-First Search), adjacent(retorna as cidades adjacentes à cidade dada) e pathDistance (já definida) como funções auxiliares para conseguirmos identificar o(s) caminho(s) mais curtos entre as cidades fornecidas 
+  Para a função shortestPath começamos por definir o caso em que é pedido o camino mais curto ente uma cidade e ela mesma, se este não fosse o caso utilizamos as funções bfs( recebe uma cidade como ponto de partida e faz uma Breadh-First Search), adjacent(já definidaa) e pathDistance (já definida) como funções auxiliares para conseguirmos identificar o(s) caminho(s) mais curtos entre as cidades fornecidas 
   A função bfs utiliza a recursão e a função adjacent para percorrer o roadMap até detetar um caminho. Se não existir nenhum caminho possível retorna 0, caso contrário utiliza a função pathDistance para determinar a distância do mesmo e compará-la com a distância mínima (que começa com max distance):
         -se for superior descarta o camino e volta a fazer a função à procuro de um novo,
         -se for inferior a função é retornada ,mas com este camino como o mais curto,
