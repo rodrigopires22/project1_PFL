@@ -10,24 +10,32 @@ Afonso Mansilha  up202206002  50%  - Desenvolveu as features Cities, areAdjacent
         -se for igual a a funçaõ é retornada, mas com este camino acresentado a lista dos mais curtos (sem descartar os outros equivalentes).
   Por fim, quando já não recebe mais caminhos, dá return ao(s) caminho(s) mais curto(s). 
 
-**pathDistance**
 
-A função pathDistance tem o objetivo de calcular a distância total percorrida ao seguir um caminho específico (uma sequência de cidades) em um RoadMap. Ela funciona de maneira recursiva, verificando se cada par consecutivo de cidades no caminho está conectado por uma estrada. Para cada par de cidades, usa a função auxiliar distance para verificar se há uma estrada e qual a sua distância. Se todas as cidades estiverem conectadas, a função soma todas as distâncias e retorna o total em formato Just. Caso encontre uma desconexão (ou seja, se não houver estrada entre duas cidades consecutivas), a função retorna Nothing, indicando que o caminho é inválido. Essa função é importante para calcular o custo total de um caminho, por exemplo, no problema do "Traveling Salesman".
 
-**rome**
+Implementação da Função travelSales:
 
-A função rome é responsável por encontrar as cidades com o maior número de estradas conectadas (ou seja, aquelas com o maior "grau"). A função percorre o RoadMap, utilizando a função auxiliar adjacent para calcular quantas estradas partem de cada cidade. Depois, compara esses graus e retorna a lista das cidades que têm o maior número de conexões. Na prática, isso pode ser útil para identificar os principais "hubs" ou centros de tráfego dentro de um mapa de estradas, mostrando quais cidades são mais acessíveis ou possuem maior movimentação. A função usa listas para armazenar o grau de cada cidade e seleciona aquelas com o grau máximo.
+Explicação da Implementação
+A função travelSales foi implementada para resolver o problema do "Traveling Salesman" (TSP), que consiste em encontrar o caminho mais curto que visita todas as cidades exatamente uma vez e retorna à cidade de origem. Para esse problema, utilizamos uma abordagem de força bruta. A estratégia é gerar todas as permutações possíveis das cidades e verificar quais caminhos são válidos, ou seja, quais têm todas as cidades conectadas por estradas no RoadMap. Entre todos os caminhos válidos, selecionamos aquele com a menor distância total.
 
-**travelSales**
+Estruturas Auxiliares Utilizadas
+Permutações de Caminhos: Usamos a função permutations da biblioteca Data.List para gerar todas as permutações possíveis das cidades no mapa. Isso garante que todas as sequências de visitas às cidades sejam consideradas, permitindo que exploremos todas as soluções possíveis para o problema do TSP.
 
-A função travelSales resolve o clássico problema do "Traveling Salesman", em que se busca encontrar o caminho mais curto que permite visitar todas as cidades do RoadMap uma vez e retornar à cidade de origem. A função começa gerando todas as permutações possíveis de cidades (todos os caminhos possíveis) e, para cada permutação, verifica se o caminho é válido usando a função isValidPath. Depois, calcula a distância de cada caminho válido utilizando a função pathDistance e seleciona o caminho com a menor distância total. O travelSales é uma solução de força bruta, pois verifica todas as possíveis combinações de caminhos, sendo útil para problemas de roteamento onde é necessário minimizar o custo (distância) de um percurso que cobre todas as cidades.
+Função isValidPath: Esta função verifica se um caminho gerado é válido, ou seja, se todas as cidades consecutivas no caminho estão conectadas por estradas. Sem essa verificação, um caminho que inclua cidades sem conexão não seria válido para o problema.
 
-**isValidPath**
+Função pathDistance: Após gerar e validar um caminho, usamos pathDistance para calcular a distância total do caminho. A função soma as distâncias entre as cidades consecutivas no caminho, retornando Nothing para caminhos desconectados.
 
-A função isValidPath é usada para verificar se um caminho (sequência de cidades) é válido, ou seja, se todas as cidades no caminho estão conectadas por estradas diretas. A função percorre o caminho verificando, para cada par consecutivo de cidades, se existe uma estrada entre elas, utilizando a função auxiliar distance. Se todas as conexões existirem, o caminho é considerado válido. Se qualquer uma das conexões estiver faltando, a função retorna False, indicando que o caminho não pode ser percorrido. isValidPath é essencial para garantir que apenas caminhos possíveis sejam considerados em outras funções, como travelSales.
+Função minimumBy: Para selecionar o caminho com a menor distância entre todos os caminhos válidos, usamos minimumBy, que compara as distâncias de todos os caminhos e retorna o menor.
 
-**Funções auxiliares**
+Algoritmo Utilizado
+Optamos por uma abordagem de força bruta, que gera todas as permutações possíveis de caminhos e calcula a distância de cada um. Embora não seja a solução mais eficiente para grandes instâncias do problema, esta abordagem é garantidamente correta, encontrando o caminho ótimo.
 
--distance: Verifica se há uma estrada entre duas cidades e retorna a distância dessa estrada (ou Nothing se não houver estrada). É usada para validar conexões e calcular distâncias entre cidades.
+Gerar Permutações: Primeiro, geramos todas as permutações possíveis das cidades no RoadMap (todos os possíveis caminhos que cobrem todas as cidades uma vez).
 
--adjacent: Retorna uma lista de cidades diretamente conectadas a uma cidade específica, juntamente com as distâncias dessas conexões.
+Verificação de Validade: Para cada permutação gerada, a função isValidPath verifica se o caminho é válido. Isso garante que apenas caminhos onde todas as cidades estão conectadas sejam considerados.
+
+Cálculo de Distância: Para cada caminho válido, a função pathDistance calcula a distância total. Se a distância de um caminho for menor do que a distância mínima encontrada até o momento, o caminho é armazenado como o melhor até então.
+
+Selecionar o Melhor Caminho: Após calcular as distâncias de todos os caminhos válidos, usamos minimumBy para selecionar o caminho com a menor distância total e retornamos esse caminho como solução do TSP.
+
+
+
