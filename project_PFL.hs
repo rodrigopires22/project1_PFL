@@ -12,6 +12,11 @@ type Distance = Int
 
 type RoadMap = [(City,City,Distance)]
 
+-- minimumBy é usado para encontrar o caminho com a menor distância
+minimumBy :: (a -> a -> Ordering) -> [a] -> a
+minimumBy = Data.List.minimumBy
+
+
 cities :: RoadMap -> [City]
 
 {-Para esta função nós usamos uma Comprension List para percorrer todas as cidades do road map, concatenado-as numa lista com a função concat. 
