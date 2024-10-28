@@ -51,20 +51,20 @@ adjacent r city = ([ (c1, d) | (c1, c2, d) <- r, c2 == city] ++ [(c2, d) | (c1, 
 
 
 pathDistance :: RoadMap -> Path -> Maybe Distance
-pathDistance _ [] = Just 0
-pathDistance _ [_] = Just 0
-pathDistance roadmap (c1:c2:cs) = case distance roadmap c1 c2 of
-    Nothing -> Nothing
-    Just d  -> case pathDistance roadmap (c2:cs) of
-        Nothing -> Nothing
-        Just ds -> Just (d + ds)
+pathDistance _ [] = Just 0 -- Se o caminho for vazio, a distância é 0
+pathDistance _ [_] = Just 0 -- Se o caminho contiver apenas uma cidade, a distância é 0
+pathDistance roadmap (c1:c2:cs) = case distance roadmap c1 c2 of -- Verifica se há uma estrada direta entre c1 e c2
+    Nothing -> Nothing -- Se não houver estrada entre c1 e c2, retorna Nothing (caminho inválido)
+    Just d  -> case pathDistance roadmap (c2:cs) of -- Calcula recursivamente a distância do restante do caminho
+        Nothing -> Nothing -- Se o restante do caminho for inválido, retorna Nothing
+        Just ds -> Just (d + ds) -- Se o restante do caminho for válido, soma a distância atual com a total do restante
 
 
 rome :: RoadMap -> [City]
 rome r = [city | (city, deg) <- cityDegree, deg == maxDegree]
   where
-    cityDegree = [(city, length (adjacent r city)) | city <- cities r]
-    maxDegree = maximum (map snd cityDegree)
+    cityDegree = [(city, length (adjacent r city)) | city <- cities r] -- cityDegree calcula o grau (número de conexões) de cada cidade no RoadMap.
+    maxDegree = maximum (map snd cityDegree)-- maxDegree armazena o valor do maior grau encontrado entre as cidades.
 
 
 adjacentCity :: RoadMap -> City -> [City] -- Função para saber as cidades adjacentes a outra cidade (é igual à função adjacent só que sem a distância)
@@ -117,7 +117,22 @@ shortestPath r start end
             in bfs (paths ++ newPaths) shortestPaths minDist
 
 travelSales :: RoadMap -> Path
-travelSales = undefined
+travelSales roadmap = 
+  let citiesList = cities roadmap   -- Obtenção da lista de todas as cidades no mapa
+      paths = Data.List.permutations citiesList   -- Geração de todas as permutações possíveis das cidades
+      validPaths = filter (isValidPath roadmap) paths  -- Filtra os caminhos válidos que conectam todas as cidades
+      distances = map (\p -> (p, pathDistance roadmap (p ++ [head p]))) validPaths  -- Calcula a distância de cada caminho e fecha o ciclo retornando à cidade de origem
+  in case filter (\(_, d) -> d /= Nothing) distances of
+       [] -> []   -- Se não houver caminhos válidos, retorna lista vazia
+       ds -> fst (minimumBy (\(_, d1) (_, d2) -> compare d1 d2) ds)   -- Retorna o caminho com a menor distância
+
+-- Função auxiliar que verifica se um caminho é válido (todas as cidades estão conectadas no mapa)
+isValidPath :: RoadMap -> Path -> Bool
+isValidPath roadmap (c1:c2:rest) = case distance roadmap c1 c2 of
+  Nothing -> False
+  Just _  -> isValidPath roadmap (c2:rest)
+isValidPath _ _ = True
+
 
 tspBruteForce :: RoadMap -> Path
 tspBruteForce = undefined -- only for groups of 3 people; groups of 2 people: do not edit this function
