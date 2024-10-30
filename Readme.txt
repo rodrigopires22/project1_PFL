@@ -1,9 +1,9 @@
-Rodrigo Pires up202207292 50% - Desenvolveu as features pathDistance, rome, adjacentCity, travelSales e isValidPath
-Afonso Mansilha  up202206002  50%  - Desenvolveu as features Cities, areAdjacent, isStronglyConnected e shortesPath e as funções auxiliares adjacentCity, bfs, dfs e dfsHelper
+Rodrigo Pires up202207292 50% - Desenvolveu as features pathDistance, rome, distance, travelSales e adjacent e as funções auxiliares isValidPath e minimumBy.
+Afonso Mansilha  up202206002  50%  - Desenvolveu as features Cities, areAdjacent, isStronglyConnected e shortesPath e as funções auxiliares adjacentCity, bfs, dfs e dfsHelper.
 
 **shortestPath**
 
-  Para a função shortestPath começamos por definir o caso em que é pedido o camino mais curto ente uma cidade e ela mesma, se este não fosse o caso utilizamos as funções bfs( recebe uma cidade como ponto de partida e faz uma Breadh-First Search), adjacent(já definidaa) e pathDistance (já definida) como funções auxiliares para conseguirmos identificar o(s) caminho(s) mais curtos entre as cidades fornecidas 
+  Para a função shortestPath começamos por definir o caso em que é pedido o camino mais curto ente uma cidade e ela mesma, se este não fosse o caso utilizamos as funções bfs( recebe uma cidade como ponto de partida e faz uma Breadh-First Search), adjacent(já definida) e pathDistance (já definida) como funções auxiliares para conseguirmos identificar o(s) caminho(s) mais curtos entre as cidades fornecidas 
   A função bfs utiliza a recursão e a função adjacent para percorrer o roadMap até detetar um caminho. Se não existir nenhum caminho possível retorna 0, caso contrário utiliza a função pathDistance para determinar a distância do mesmo e compará-la com a distância mínima (que começa com max distance):
         -se for superior descarta o camino e volta a fazer a função à procuro de um novo,
         -se for inferior a função é retornada ,mas com este camino como o mais curto,
@@ -27,13 +27,13 @@ Função pathDistance: Após gerar e validar um caminho, usamos pathDistance par
 Função minimumBy: Para selecionar o caminho com a menor distância entre todos os caminhos válidos, usamos minimumBy, que compara as distâncias de todos os caminhos e retorna o menor.
 
 Algoritmo Utilizado
-Optamos por uma abordagem de força bruta, que gera todas as permutações possíveis de caminhos e calcula a distância de cada um. Embora não seja a solução mais eficiente para grandes instâncias do problema, esta abordagem é garantidamente correta, encontrando o caminho ótimo.
+Optamos por uma abordagem de força bruta, que gera todas as permutações possíveis de caminhos e calcula a distância de cada um. Embora não seja a solução mais eficiente para grandes instâncias do problema, esta abordagem é garantidamente correta, encontrando o melhor caminho.
 
 Gerar Permutações: Primeiro, geramos todas as permutações possíveis das cidades no RoadMap (todos os possíveis caminhos que cobrem todas as cidades uma vez).
 
 Verificação de Validade: Para cada permutação gerada, a função isValidPath verifica se o caminho é válido. Isso garante que apenas caminhos onde todas as cidades estão conectadas sejam considerados.
 
-Cálculo de Distância: Para cada caminho válido, a função pathDistance calcula a distância total. Se a distância de um caminho for menor do que a distância mínima encontrada até o momento, o caminho é armazenado como o melhor até então.
+Cálculo de Distância: Para cada caminho válido, a função pathDistance calcula a distância total. Se a distância de um caminho for menor do que a distância mínima encontrada até ao momento, o caminho é armazenado como o melhor até então.
 
 Selecionar o Melhor Caminho: Após calcular as distâncias de todos os caminhos válidos, usamos minimumBy para selecionar o caminho com a menor distância total e retornamos esse caminho como solução do TSP.
 
